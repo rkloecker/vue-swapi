@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.3/vue.min.js"></script>
+  <style>
+    h2 {
+      font-size: 1em;
+      margin: 0 !important;
+    }
+  </style>
+  <title>Star Wars Facts</title>
+</head>
+
+<body>
+  <div id="app">
+    <nav class="navbar navbar-dark bg-primary mb-3 text-white justify-content-center">
+      <h1>Star Wars Facts</h1>
+    </nav>
+    <div v-if="loading">Loading...</div>
+    <div class="container">
+      <div class="row">
+        <div v-for="p in people" class="col-12 col-sm-6 col-md-4 col-lg-3 ">
+          <div class="card mb-2">
+            <div class="card-header text-white bg-dark">
+              <h2 data-name class="card-title text-center ">{{ p.name }}</h2>
+            </div>
+            <div class="row">
+              <div class="card-body">
+                <div class="row ">
+                  <div class="col-6">Mass:</div>
+                  <div class="col-6"><span data-mass class="badge badge-primary">{{ p.mass }}</span> </div>
+                </div>
+                <div class="row ">
+                  <div class="col-6">Height:</div>
+                  <div class="col-6"><span data-height class="badge badge-success">{{ p.height }}</span> </div>
+                </div>
+                <div class="row ">
+                  <div class="col-6">Birthyear:</div>
+                  <div class="col-6"><span data-birthyear class="badge badge-info">{{ p.birth_year }}</span> </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button v-on:click="showResult" type="button" class="btn btn-primary">Show More</button>
+      <button v-if="people.length >=20" v-on:click="showLess" type="button" class="btn btn-info">Show Less</button>
+    </div>
+  </div>
+  <script>
+    new Vue({
+      el: '#app',
+      data() {
+        return {
+          people: [],
+          cache: [],
+          loading: true,
+          url: 'https://swapi.dev/api/people/',
+          currentPage: 1,
+          maxPage: 1
+        }
+      },
+      methods: {
+        showResult: async function () {
+          if (this.currentPage < this.maxPage) {
+            //we can grab data from cache instead of making api call
+            let lenPeople = this.people.length;
+            this.people = this.cache.slice(0, lenPeople + 10)
+            this.currentPage++;
+            // console.log("from cache")
+          }
+          else {
+            //we make api call
+            try {
+              let resp = await fetch(`${this.url}?currentPage=${this.currentPage}`);
+              let data = await resp.json();
+              this.cache.push(...data.results);
+              this.people.push(...data.results);
+              this.currentPage++;
+              this.maxPage++;
+            } catch (error) {
+              console.log(error);
+            } finally {
+              this.loading = false;
+            }
+          }
+        },
+        showLess: function () {
+          let len = this.people.length
+          if (len >= 20) {
+            this.people = this.people.slice(0, len - 10);
+            this.currentPage--;
+          }
+        }
+      },
+      mounted() {
+        this.showResult();
+      }
+    })
+  </script>
+</body>
+
+</html>
