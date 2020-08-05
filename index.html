@@ -5,7 +5,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.3/vue.min.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.11/vue.min.js"></script> -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/3.0.0-rc.5/vue.global.prod.js"></script>
+
+
   <style>
     h2 {
       font-size: 1em;
@@ -52,8 +55,9 @@
     </div>
   </div>
   <script>
-    new Vue({
-      el: '#app',
+
+    Vue.createApp({
+
       data() {
         return {
           people: [],
@@ -100,7 +104,7 @@
       mounted() {
         this.showResult();
       }
-    })
+    }).mount('#app')
   </script>
 </body>
 
